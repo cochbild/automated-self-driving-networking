@@ -39,6 +39,7 @@ class V2VSystem:
     def __init__(self, vehicle_id: Optional[str] = None):
         self.vehicle_id = vehicle_id or f"vehicle_{int(datetime.now().timestamp())}"
         self.running = False
+        self.shutdown_task: Optional[asyncio.Task] = None
         
         # Initialize components
         self.vehicle_identity = self._create_vehicle_identity()
@@ -114,7 +115,24 @@ class V2VSystem:
     def _signal_handler(self, signum, frame) -> None:
         """Handle shutdown signals."""
         logger.info(f"Received signal {signum}, shutting down...")
-        asyncio.create_task(self.stop())
+        try:
+            # Try to get the running event loop
+            loop = asyncio.get_running_loop()
+            # Store task reference to prevent garbage collection
+            self.shutdown_task = loop.create_task(self.stop())
+        except RuntimeError:
+            # No running event loop, try to get or create one
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # Store task reference to prevent garbage collection
+                    self.shutdown_task = loop.create_task(self.stop())
+                else:
+                    # If loop is not running, schedule the coroutine
+                    loop.run_until_complete(self.stop())
+            except RuntimeError:
+                # No event loop available, create a new one
+                asyncio.run(self.stop())
     
     async def start(self) -> None:
         """Start the V2V system."""
@@ -172,10 +190,10 @@ class V2VSystem:
         while self.running:
             try:
                 # Update vehicle position (simulate GPS data)
-                await self._update_vehicle_position()
+                self._update_vehicle_position()
                 
                 # Print system statistics periodically
-                await self._print_statistics()
+                self._print_statistics()
                 
                 # Sleep for a short interval
                 await asyncio.sleep(1.0)
@@ -184,7 +202,7 @@ class V2VSystem:
                 logger.error(f"Error in main loop: {e}")
                 await asyncio.sleep(1.0)
     
-    async def _update_vehicle_position(self) -> None:
+    def _update_vehicle_position(self) -> None:
         """Update vehicle position (simulate GPS data)."""
         # In a real implementation, this would read from GPS sensors
         # For simulation, we'll use a simple pattern
@@ -234,8 +252,8 @@ class V2VSystem:
         # Update proximity detector
         self.proximity_detector.update_vehicle_position(spatial_data)
     
-    async def _print_statistics(self) -> None:
-        """Print system statistics periodically."""
+    def _print_statistics(self) -> None:
+        """Print system statistics."""
         # Print statistics every 10 seconds
         if int(datetime.now().timestamp()) % 10 == 0:
             stats = self.v2v_protocol.get_protocol_statistics()

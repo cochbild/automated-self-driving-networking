@@ -11,7 +11,7 @@ import logging
 import sys
 from datetime import datetime, timezone
 
-from src.core.vehicle_identity import VehicleIdentity, VehicleIdentityManager
+from src.core.vehicle_identity import VehicleIdentity
 from src.core.spatial_data import SpatialData, Position, Velocity, Acceleration, VehicleState
 from src.communication.security_manager import SecurityManager, SecurityConfig
 from src.communication.proximity_detector import ProximityDetector, CommunicationRange
@@ -35,6 +35,7 @@ class V2VDemo:
         self.proximity_detector = ProximityDetector(CommunicationRange())
         self.protocols = {}
         self._current_positions = {}  # Track current positions for bearing calculations
+        self._initial_positions = {}  # Store initial positions for vehicle movement
         
     def create_vehicle(self, vehicle_id: str, initial_position: Position) -> VehicleIdentity:
         """Create a new vehicle for the demo."""
@@ -62,6 +63,7 @@ class V2VDemo:
                                         self._handle_spatial_data_message)
         
         self.vehicles[vehicle_id] = vehicle
+        self._initial_positions[vehicle_id] = initial_position
         logger.info(f"Created vehicle: {vehicle_id}")
         
         return vehicle
@@ -117,9 +119,15 @@ class V2VDemo:
             import math
             time_offset = i / 10.0  # Slow movement
             
-            # Simulate circular movement
-            center_lat = 37.7749 + (hash(vehicle_id) % 100) / 100000  # Slight offset per vehicle
-            center_lon = -122.4194 + (hash(vehicle_id) % 100) / 100000
+            # Simulate circular movement around initial position
+            initial_pos = self._initial_positions.get(vehicle_id)
+            if initial_pos:
+                center_lat = initial_pos.latitude
+                center_lon = initial_pos.longitude
+            else:
+                # Fallback to default if initial position not found
+                center_lat = 37.7749 + (hash(vehicle_id) % 100) / 100000
+                center_lon = -122.4194 + (hash(vehicle_id) % 100) / 100000
             
             radius = 50.0  # 50 meter radius
             lat_offset = radius * math.cos(time_offset) / 111000
