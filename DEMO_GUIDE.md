@@ -4,7 +4,30 @@ This guide explains the different ways to run and understand the V2V (Vehicle-to
 
 ## 🎮 Available Demos
 
-### 1. **Simple Demo** (Recommended for beginners)
+### 1. **WSL Visual Demo** (⭐ RECOMMENDED - Most Complete)
+```bash
+python3 wsl_visual_demo.py
+```
+
+**What it shows:**
+- ✅ **Animated GIF** - Creates a video showing vehicle movement, collision detection, and avoidance
+- ✅ **Collision Detection & Avoidance** - Visual demonstration of V2V collision prevention
+- ✅ **Communication statistics** - Real-time message counts and telemetry data
+- ✅ **Safety metrics** - Comparison of V2V vs Camera-Only systems
+- ✅ **Before/After paths** - Shows original collision paths vs avoided paths
+- ✅ **WSL Compatible** - Works perfectly in WSL environments
+- ✅ **Saved files** - Creates both animated GIF and static image files
+
+**Perfect for:** WSL, terminal environments, creating shareable demonstrations
+
+**Note:** This is the most complete and up-to-date demo with all recent improvements including:
+- Correct vehicle colors (red, blue, green)
+- Accurate collision detection using visual circle boundaries
+- Proper movement directions (North = up, East = right)
+- Non-overlapping starting positions
+- Accurate message counting
+
+### 2. **Simple Demo** (For beginners)
 ```bash
 python3 simple_demo.py
 ```
@@ -34,19 +57,6 @@ python3 text_visual_demo.py
 
 **Perfect for:** Terminal environments, WSL, SSH sessions
 
-### 3. **WSL Visual Demo** (Best for WSL environments)
-```bash
-python3 wsl_visual_demo.py
-```
-
-**What it shows:**
-- ✅ **Animated GIF** - Creates a video showing vehicle movement
-- ✅ **Communication ranges** - Dashed circles show communication areas
-- ✅ **Movement patterns** - Different vehicles follow different paths
-- ✅ **WSL Compatible** - Works perfectly in WSL environments
-- ✅ **Saved files** - Creates both GIF and static image files
-
-**Perfect for:** WSL, terminal environments, creates files you can view later
 
 ### 4. **Visual Demo** (Best for GUI environments)
 ```bash

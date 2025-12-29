@@ -126,9 +126,18 @@ This research project explores:
 # Activate virtual environment
 source venv/bin/activate
 
-# Run main application
+# Run the visual demo (recommended - shows collision detection and avoidance)
+python3 wsl_visual_demo.py
+
+# Or run the basic V2V system
 python3 main.py
 ```
+
+**Note**: `wsl_visual_demo.py` is the main visual demonstration that shows:
+- Real-time vehicle movement with collision detection
+- Visual representation of V2V communication
+- Collision avoidance with before/after path visualization
+- Animated GIF output showing the complete demo
 
 ## Project Structure
 
