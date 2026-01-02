@@ -33,7 +33,7 @@ scipy==1.11.4
 # Data Serialization
 protobuf==4.25.1
 msgpack==1.0.7
-orjson==3.9.10
+orjson==3.9.15
 
 # Testing Framework
 pytest==7.4.3
